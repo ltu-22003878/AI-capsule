@@ -8,7 +8,7 @@ export default function Landing() {
           <span style={{ color: 'var(--accent-green-text)' }}>AI</span> Capsule
         </h1>
         <p style={styles.subtitle}>
-          Save, review and improve the AI prompts you actually use — in one
+          Save, review and improve the AI prompts you actually use, all in one
           private, authenticated library.
         </p>
         <Link to="/login">

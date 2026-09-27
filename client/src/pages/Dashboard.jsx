@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 const empty = {
   project_name: '', prompt_title: '', prompt_version: '', prompt_text: '',
-  response_summary: '', category: '', usefulness: '', reviewed: false,
+  response_summary: '', category: 'Coding', usefulness: 'Good', reviewed: false,
   improved: false, screenshot_url: '', notes: '',
 };
 
@@ -52,11 +52,13 @@ export default function Dashboard() {
   }
 
   async function handleDelete(id) {
+    if (!window.confirm('Delete this capsule? This cannot be undone.')) return;
     await fetch(`/api/capsules/${id}`, { method: 'DELETE' });
     loadCapsules();
   }
 
   async function handleLogout() {
+    if (!window.confirm('Log out of AI Capsule?')) return;
     await fetch('/api/auth/logout', { method: 'POST' });
     navigate('/login');
   }
@@ -94,14 +96,12 @@ export default function Dashboard() {
             <textarea name="prompt_text" placeholder="Prompt text" value={form.prompt_text} onChange={handleChange} required />
             <textarea name="response_summary" placeholder="Response summary" value={form.response_summary} onChange={handleChange} />
             <div style={s.row}>
-              <select name="category" value={form.category} onChange={handleChange}>
-                <option value="">Category</option>
+              <select name="category" value={form.category} onChange={handleChange} required>
                 <option>Coding</option>
                 <option>Writing</option>
                 <option>Research</option>
               </select>
-              <select name="usefulness" value={form.usefulness} onChange={handleChange}>
-                <option value="">Usefulness</option>
+              <select name="usefulness" value={form.usefulness} onChange={handleChange} required>
                 <option>Good</option>
                 <option>Needs Improvement</option>
               </select>
