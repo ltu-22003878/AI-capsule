@@ -12,10 +12,8 @@ app.set('trust proxy', 1);
 app.use(express.json());
 app.use(cookieParser());
 
-// ---------- public ----------
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
 
-// ---------- OAuth: start login ----------
 app.get('/api/auth/github', (req, res) => {
   const params = new URLSearchParams({
     client_id: GITHUB_CLIENT_ID,
@@ -25,7 +23,6 @@ app.get('/api/auth/github', (req, res) => {
   res.redirect(`https://github.com/login/oauth/authorize?${params}`);
 });
 
-// ---------- OAuth: callback ----------
 app.get('/api/auth/github/callback', async (req, res) => {
   try {
     const tokenRes = await fetch('https://github.com/login/oauth/access_token', {
@@ -67,13 +64,11 @@ app.get('/api/auth/github/callback', async (req, res) => {
   }
 });
 
-// ---------- logout ----------
 app.post('/api/auth/logout', (req, res) => {
   res.clearCookie('token', { httpOnly: true, secure: true, sameSite: 'lax' });
   res.json({ ok: true });
 });
 
-// ---------- JWT middleware ----------
 function requireAuth(req, res, next) {
   try {
     const decoded = jwt.verify(req.cookies.token, JWT_SECRET);
@@ -84,12 +79,10 @@ function requireAuth(req, res, next) {
   }
 }
 
-// ---------- who am I ----------
 app.get('/api/me', requireAuth, (req, res) => {
   res.json({ login: req.user.login });
 });
 
-// ---------- CRUD ----------
 const FIELDS = [
   'project_name', 'prompt_title', 'prompt_version', 'prompt_text',
   'response_summary', 'category', 'usefulness', 'reviewed', 'improved',
@@ -136,7 +129,6 @@ app.delete('/api/capsules/:id', requireAuth, (req, res) => {
   res.json({ ok: true });
 });
 
-// ---------- serve React build ----------
 const distPath = path.join(__dirname, 'client', 'dist');
 app.use(express.static(distPath));
 app.use((req, res) => res.sendFile(path.join(distPath, 'index.html')));
